@@ -22,6 +22,8 @@ export function attachLineDrag(
   onChange: () => void,
   isLocked: () => boolean = () => false,
   logical: { width: number; height: number } = { width: canvas.width, height: canvas.height },
+  /** Fires when an endpoint is grabbed, before the first move. */
+  onGrab: () => void = () => {},
 ): LineDragHandle {
   let dragging: "a" | "b" | null = null;
   const HIT_RADIUS = 24;
@@ -44,6 +46,7 @@ export function attachLineDrag(
     if (dragging) {
       canvas.setPointerCapture(e.pointerId);
       e.preventDefault();
+      onGrab();
     }
   };
 

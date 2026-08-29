@@ -728,8 +728,20 @@ async function init(): Promise<void> {
       () => {
         if (phase === "playing") render();
       },
-      () => phase !== "playing",
+      // locked once the round is over or its attempts are spent; a revealed
+      // attempt with tries left is still grabbable (see onGrab below)
+      () => {
+        if (phase === "playing") return false;
+        if (phase === "revealed") return cur().attempts.length >= MAX_ATTEMPTS;
+        return true;
+      },
       { width: CSS_W, height: CSS_H },
+      // grabbing an endpoint after a reveal starts the next attempt straight away
+      () => {
+        if (phase === "revealed" && cur().attempts.length < MAX_ATTEMPTS) {
+          startAttempt();
+        }
+      },
     );
     confirmBtn.addEventListener("click", onConfirm);
     finishEarlyBtn.addEventListener("click", () => void leaveRound());
