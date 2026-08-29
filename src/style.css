@@ -70,12 +70,19 @@ header h1 {
 .header-tools {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 8px;
   margin-bottom: 8px;
 }
 
-#langSelect {
+.header-tools-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#langSelect,
+.archive-select {
   font: inherit;
   font-size: 0.85rem;
   padding: 4px 8px;
@@ -84,6 +91,14 @@ header h1 {
   background: var(--panel);
   color: var(--fg);
   cursor: pointer;
+}
+
+.archive-select {
+  max-width: 12rem;
+}
+
+.archive-select:hover {
+  border-color: var(--accent);
 }
 
 .help-btn {

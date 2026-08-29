@@ -64,6 +64,15 @@ const OPTIMAL_COLOR: Record<string, string> = {
 const params = new URLSearchParams(location.search);
 const DEV = params.has("dev");
 const FORCE_COUNTRY = params.get("country")?.toUpperCase() ?? null;
+// ?date=YYYY-MM-DD re-seeds the daily (country, puzzle number and label all move
+// together), so a shareable link can land on a chosen puzzle without dev mode.
+// Only past dates and today are honoured — a future date would spoil upcoming
+// puzzles, so it's ignored and we fall back to today.
+const dateParam = params.get("date");
+const DATE_OVERRIDE =
+  dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) && dateParam <= isoDate()
+    ? dateParam
+    : null;
 
 const pt1 = n1;
 
@@ -76,8 +85,11 @@ app.innerHTML = `
   <main class="game">
     <header>
       <div class="header-tools">
-        <select id="langSelect" aria-label="${t.ui.languageLabel}">${langOptions}</select>
-        <button id="helpBtn" class="help-btn" type="button" aria-label="${t.ui.helpLabel}">?</button>
+        <select id="archiveSelect" class="archive-select" aria-label="${t.ui.archiveLabel}"></select>
+        <div class="header-tools-right">
+          <select id="langSelect" aria-label="${t.ui.languageLabel}">${langOptions}</select>
+          <button id="helpBtn" class="help-btn" type="button" aria-label="${t.ui.helpLabel}">?</button>
+        </div>
       </div>
       <h1>${t.appName}</h1>
       <p class="tagline">${t.tagline}</p>
@@ -185,6 +197,41 @@ let countryCard: ResultCountry = {
 };
 let puzzle = 0;
 let store: Store = loadStore();
+
+// Archive picker: today + the previous 60 dailies. Choosing one reloads with
+// ?date=, which re-seeds the whole puzzle (see DATE_OVERRIDE).
+const archiveSelect = app.querySelector<HTMLSelectElement>("#archiveSelect")!;
+{
+  const anchor = isoDate();
+  const [ay, am, ad] = anchor.split("-").map(Number) as [number, number, number];
+  const anchorMs = Date.UTC(ay, am - 1, ad);
+  const selected = DATE_OVERRIDE ?? anchor;
+  const opts: string[] = [];
+  for (let i = 0; i < 61; i++) {
+    const d = new Date(anchorMs - i * 86_400_000).toISOString().slice(0, 10);
+    if (puzzleNumber(d) < 1) break; // stop at puzzle #1
+    const done = findRecord(store, puzzleNumber(d))?.completed ? "✓ " : "";
+    const label = i === 0 ? t.ui.archiveToday : d;
+    opts.push(
+      `<option value="${d}"${d === selected ? " selected" : ""}>${done}${label}</option>`,
+    );
+  }
+  archiveSelect.innerHTML = opts.join("");
+}
+archiveSelect.addEventListener("change", () => {
+  location.search =
+    archiveSelect.value === isoDate() ? "" : `?date=${archiveSelect.value}`;
+});
+
+/** Prefix the current day's archive option with the ✓ once it's completed. */
+function markArchiveCompleted(): void {
+  const opt = [...archiveSelect.options].find(
+    (o) => o.value === (DATE_OVERRIDE ?? isoDate()),
+  );
+  if (opt && !opt.textContent?.startsWith("✓")) {
+    opt.textContent = `✓ ${opt.textContent}`;
+  }
+}
 
 let rounds: RoundState[] = [];
 let ri = 0;
@@ -519,6 +566,7 @@ async function finish(): Promise<void> {
       })),
     });
     saveStore(store);
+    markArchiveCompleted();
   }
 
   viewRound = playedRounds().length > 1 ? null : 0;
@@ -626,7 +674,8 @@ async function init(): Promise<void> {
     if (manifest.countries.length === 0) throw new Error(t.ui.noCountries);
 
     const ids = manifest.countries.map((c) => c.id);
-    const daily = dailyChallenge(ids);
+    const today = DATE_OVERRIDE ?? isoDate();
+    const daily = dailyChallenge(ids, ["area"], today);
     const chosen =
       DEV && FORCE_COUNTRY && ids.includes(FORCE_COUNTRY)
         ? FORCE_COUNTRY
@@ -647,7 +696,7 @@ async function init(): Promise<void> {
       popEst: meta.pop_est ?? 0,
       difficulty: meta.difficulty,
     };
-    puzzle = puzzleNumber(isoDate());
+    puzzle = puzzleNumber(today);
 
     feature = await loadCountry(meta);
     projection = fitProjection(feature, CSS_W, CSS_H);

@@ -20,6 +20,8 @@ export interface Strings {
   ui: {
     helpLabel: string;
     languageLabel: string;
+    archiveLabel: string;
+    archiveToday: string;
     loadError: (msg: string) => string;
     noCountries: string;
   };
@@ -100,6 +102,8 @@ const pt: Strings = {
   ui: {
     helpLabel: "Como jogar",
     languageLabel: "Idioma",
+    archiveLabel: "Arquivo",
+    archiveToday: "Hoje",
     loadError: (m) => `Erro ao carregar: ${m}`,
     noCountries: "manifesto sem países",
   },
@@ -128,7 +132,7 @@ const pt: Strings = {
     calculating: "A calcular a melhor linha…",
   },
   streak: (s, max, plays) =>
-    `🔥 Sequência de ${s} ${plural(s, "dia", "dias")} · melhor ${max} · ${plays} ${plural(plays, "jogo", "jogos")}`,
+    `🔥 Sequência: ${s} ${plural(s, "dia", "dias")} · Recorde: ${max} ${plural(max, "dia", "dias")} · Jogos: ${plays}`,
   view: { label: "Ver no mapa:", all: "Todas" },
   feedback: {
     sideBlue: "azul",
@@ -185,6 +189,8 @@ const en: Strings = {
   ui: {
     helpLabel: "How to play",
     languageLabel: "Language",
+    archiveLabel: "Archive",
+    archiveToday: "Today",
     loadError: (m) => `Failed to load: ${m}`,
     noCountries: "manifest has no countries",
   },
@@ -213,7 +219,7 @@ const en: Strings = {
     calculating: "Working out the best line…",
   },
   streak: (s, max, plays) =>
-    `🔥 ${s}-${plural(s, "day", "day")} streak · best ${max} · ${plays} ${plural(plays, "game", "games")}`,
+    `🔥 Streak: ${s} ${plural(s, "day", "days")} · Best: ${max} ${plural(max, "day", "days")} · Games: ${plays}`,
   view: { label: "Show on map:", all: "All" },
   feedback: {
     sideBlue: "blue",
@@ -269,6 +275,8 @@ const es: Strings = {
   ui: {
     helpLabel: "Cómo jugar",
     languageLabel: "Idioma",
+    archiveLabel: "Archivo",
+    archiveToday: "Hoy",
     loadError: (m) => `Error al cargar: ${m}`,
     noCountries: "el manifiesto no tiene países",
   },
@@ -297,7 +305,7 @@ const es: Strings = {
     calculating: "Calculando la mejor línea…",
   },
   streak: (s, max, plays) =>
-    `🔥 Racha de ${s} ${plural(s, "día", "días")} · mejor ${max} · ${plays} ${plural(plays, "partida", "partidas")}`,
+    `🔥 Racha: ${s} ${plural(s, "día", "días")} · Récord: ${max} ${plural(max, "día", "días")} · Partidas: ${plays}`,
   view: { label: "Ver en el mapa:", all: "Todas" },
   feedback: {
     sideBlue: "azul",
@@ -353,6 +361,8 @@ const fr: Strings = {
   ui: {
     helpLabel: "Comment jouer",
     languageLabel: "Langue",
+    archiveLabel: "Archives",
+    archiveToday: "Aujourd'hui",
     loadError: (m) => `Échec du chargement : ${m}`,
     noCountries: "le manifeste ne contient aucun pays",
   },
@@ -381,7 +391,7 @@ const fr: Strings = {
     calculating: "Calcul de la meilleure ligne…",
   },
   streak: (s, max, plays) =>
-    `🔥 Série de ${s} ${plural(s, "jour", "jours")} · record ${max} · ${plays} ${plural(plays, "partie", "parties")}`,
+    `🔥 Série : ${s} ${plural(s, "jour", "jours")} · Record : ${max} ${plural(max, "jour", "jours")} · Parties : ${plays}`,
   view: { label: "Sur la carte :", all: "Toutes" },
   feedback: {
     sideBlue: "bleue",
@@ -437,6 +447,8 @@ const de: Strings = {
   ui: {
     helpLabel: "So wird gespielt",
     languageLabel: "Sprache",
+    archiveLabel: "Archiv",
+    archiveToday: "Heute",
     loadError: (m) => `Laden fehlgeschlagen: ${m}`,
     noCountries: "Manifest enthält keine Länder",
   },
@@ -465,7 +477,7 @@ const de: Strings = {
     calculating: "Beste Linie wird berechnet…",
   },
   streak: (s, max, plays) =>
-    `🔥 ${s}-${plural(s, "Tage", "Tage")}-Serie · Rekord ${max} · ${plays} ${plural(plays, "Spiel", "Spiele")}`,
+    `🔥 Serie: ${s} ${plural(s, "Tag", "Tage")} · Rekord: ${max} ${plural(max, "Tag", "Tage")} · Spiele: ${plays}`,
   view: { label: "Auf der Karte:", all: "Alle" },
   feedback: {
     sideBlue: "blaue",
