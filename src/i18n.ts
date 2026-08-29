@@ -22,6 +22,8 @@ export interface Strings {
     languageLabel: string;
     archiveLabel: string;
     archiveToday: string;
+    archivePrev: string;
+    archiveNext: string;
     loadError: (msg: string) => string;
     noCountries: string;
   };
@@ -105,6 +107,8 @@ const pt: Strings = {
     languageLabel: "Idioma",
     archiveLabel: "Arquivo",
     archiveToday: "Hoje",
+    archivePrev: "Dia anterior",
+    archiveNext: "Dia seguinte",
     loadError: (m) => `Erro ao carregar: ${m}`,
     noCountries: "manifesto sem países",
   },
@@ -193,6 +197,8 @@ const en: Strings = {
     languageLabel: "Language",
     archiveLabel: "Archive",
     archiveToday: "Today",
+    archivePrev: "Previous day",
+    archiveNext: "Next day",
     loadError: (m) => `Failed to load: ${m}`,
     noCountries: "manifest has no countries",
   },
@@ -280,6 +286,8 @@ const es: Strings = {
     languageLabel: "Idioma",
     archiveLabel: "Archivo",
     archiveToday: "Hoy",
+    archivePrev: "Día anterior",
+    archiveNext: "Día siguiente",
     loadError: (m) => `Error al cargar: ${m}`,
     noCountries: "el manifiesto no tiene países",
   },
@@ -367,6 +375,8 @@ const fr: Strings = {
     languageLabel: "Langue",
     archiveLabel: "Archives",
     archiveToday: "Aujourd'hui",
+    archivePrev: "Jour précédent",
+    archiveNext: "Jour suivant",
     loadError: (m) => `Échec du chargement : ${m}`,
     noCountries: "le manifeste ne contient aucun pays",
   },
@@ -454,6 +464,8 @@ const de: Strings = {
     languageLabel: "Sprache",
     archiveLabel: "Archiv",
     archiveToday: "Heute",
+    archivePrev: "Vorheriger Tag",
+    archiveNext: "Nächster Tag",
     loadError: (m) => `Laden fehlgeschlagen: ${m}`,
     noCountries: "Manifest enthält keine Länder",
   },

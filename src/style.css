@@ -81,6 +81,37 @@ header h1 {
   gap: 8px;
 }
 
+.archive-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.archive-arrow {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--fg);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.archive-arrow:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.archive-arrow:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 #langSelect,
 .archive-select {
   font: inherit;

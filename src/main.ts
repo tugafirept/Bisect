@@ -85,7 +85,11 @@ app.innerHTML = `
   <main class="game">
     <header>
       <div class="header-tools">
-        <select id="archiveSelect" class="archive-select" aria-label="${t.ui.archiveLabel}"></select>
+        <div class="archive-nav">
+          <button id="archivePrev" class="archive-arrow" type="button" aria-label="${t.ui.archivePrev}">‹</button>
+          <select id="archiveSelect" class="archive-select" aria-label="${t.ui.archiveLabel}"></select>
+          <button id="archiveNext" class="archive-arrow" type="button" aria-label="${t.ui.archiveNext}">›</button>
+        </div>
         <div class="header-tools-right">
           <select id="langSelect" aria-label="${t.ui.languageLabel}">${langOptions}</select>
           <button id="helpBtn" class="help-btn" type="button" aria-label="${t.ui.helpLabel}">?</button>
@@ -198,30 +202,50 @@ let countryCard: ResultCountry = {
 let puzzle = 0;
 let store: Store = loadStore();
 
-// Archive picker: today + the previous 60 dailies. Choosing one reloads with
-// ?date=, which re-seeds the whole puzzle (see DATE_OVERRIDE).
+// Archive picker: today + the previous 60 dailies. Choosing one (or using the
+// ‹ / › arrows) reloads with ?date=, which re-seeds the whole puzzle (see
+// DATE_OVERRIDE).
 const archiveSelect = app.querySelector<HTMLSelectElement>("#archiveSelect")!;
+const archivePrevBtn = app.querySelector<HTMLButtonElement>("#archivePrev")!;
+const archiveNextBtn = app.querySelector<HTMLButtonElement>("#archiveNext")!;
+const currentDate = DATE_OVERRIDE ?? isoDate();
+
+/** ISO date `days` away from `iso`, staying on UTC midnight. */
+function shiftDate(iso: string, days: number): string {
+  const [y, m, d] = iso.split("-").map(Number) as [number, number, number];
+  return new Date(Date.UTC(y, m - 1, d) + days * 86_400_000)
+    .toISOString()
+    .slice(0, 10);
+}
+
+/** Reload on a chosen archive day; today drops the param entirely. */
+function goToDate(d: string): void {
+  location.search = d >= isoDate() ? "" : `?date=${d}`;
+}
+
 {
-  const anchor = isoDate();
-  const [ay, am, ad] = anchor.split("-").map(Number) as [number, number, number];
-  const anchorMs = Date.UTC(ay, am - 1, ad);
-  const selected = DATE_OVERRIDE ?? anchor;
   const opts: string[] = [];
   for (let i = 0; i < 61; i++) {
-    const d = new Date(anchorMs - i * 86_400_000).toISOString().slice(0, 10);
+    const d = shiftDate(isoDate(), -i);
     if (puzzleNumber(d) < 1) break; // stop at puzzle #1
     const done = findRecord(store, puzzleNumber(d))?.completed ? "✓ " : "";
     const label = i === 0 ? t.ui.archiveToday : d;
     opts.push(
-      `<option value="${d}"${d === selected ? " selected" : ""}>${done}${label}</option>`,
+      `<option value="${d}"${d === currentDate ? " selected" : ""}>${done}${label}</option>`,
     );
   }
   archiveSelect.innerHTML = opts.join("");
 }
-archiveSelect.addEventListener("change", () => {
-  location.search =
-    archiveSelect.value === isoDate() ? "" : `?date=${archiveSelect.value}`;
-});
+archiveSelect.addEventListener("change", () => goToDate(archiveSelect.value));
+
+archivePrevBtn.disabled = puzzleNumber(shiftDate(currentDate, -1)) < 1;
+archiveNextBtn.disabled = currentDate >= isoDate();
+archivePrevBtn.addEventListener("click", () =>
+  goToDate(shiftDate(currentDate, -1)),
+);
+archiveNextBtn.addEventListener("click", () =>
+  goToDate(shiftDate(currentDate, 1)),
+);
 
 /** Prefix the current day's archive option with the ✓ once it's completed. */
 function markArchiveCompleted(): void {
